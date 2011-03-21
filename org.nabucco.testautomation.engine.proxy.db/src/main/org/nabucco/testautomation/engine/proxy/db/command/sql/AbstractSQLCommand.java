@@ -183,4 +183,12 @@ public abstract class AbstractSQLCommand extends AbstractProxyCommand implements
 		logger.error(msg);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void warning(String msg) {
+		logger.warning(msg);
+	}
+
 }

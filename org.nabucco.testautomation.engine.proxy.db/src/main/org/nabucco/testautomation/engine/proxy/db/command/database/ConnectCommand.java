@@ -45,11 +45,17 @@ public class ConnectCommand extends AbstractDatabaseCommand {
 		this.databaseClassloader = classloader;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Connection getConnection() {
 		return this.connection;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public PropertyList execute(Metadata metadata, PropertyList properties)
 			throws DatabaseCommandException {

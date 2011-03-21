@@ -16,6 +16,7 @@
 */
 package org.nabucco.testautomation.engine.proxy.db.command.sql;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,11 +28,8 @@ import java.util.Date;
 
 import org.nabucco.testautomation.engine.base.util.PropertyHelper;
 import org.nabucco.testautomation.engine.proxy.db.exception.SQLCommandException;
-
 import org.nabucco.testautomation.facade.datatype.property.BooleanProperty;
 import org.nabucco.testautomation.facade.datatype.property.DateProperty;
-import org.nabucco.testautomation.facade.datatype.property.DoubleProperty;
-import org.nabucco.testautomation.facade.datatype.property.LongProperty;
 import org.nabucco.testautomation.facade.datatype.property.PropertyList;
 import org.nabucco.testautomation.facade.datatype.property.StringProperty;
 import org.nabucco.testautomation.facade.datatype.property.base.Property;
@@ -152,34 +150,49 @@ public class SelectStatement extends AbstractSQLCommand {
 					.createDateProperty(name, (Date) obj);
 			return p;
 		}
+		case Types.DOUBLE:
+		case Types.DECIMAL:
 		case Types.NUMERIC:
 		case Types.BIGINT: {
-			long value;
+			Property p;
 			
-			if (obj instanceof Long) {
-				value = (Long) obj;
+			if (obj == null) {
+				p = PropertyHelper.createIntegerProperty(name, null);
+			} else if (obj instanceof Long) {
+				long value = (Long) obj;
+				p = PropertyHelper.createLongProperty(name, value);
+			} else if (obj instanceof Double) {
+				double value = (Double) obj;
+				p = PropertyHelper.createDoubleProperty(name, value);
 			} else if (obj instanceof BigInteger) {
-				value = ((BigInteger) obj).longValue();
+				long value = ((BigInteger) obj).longValue();
+				p = PropertyHelper.createLongProperty(name, value);
+			} else if (obj instanceof BigDecimal) {
+				double value = ((BigDecimal) obj).doubleValue();
+				p = PropertyHelper.createDoubleProperty(name, value);
 			} else {
-				value = Long.parseLong(obj.toString());
+				p = PropertyHelper.createStringProperty(name, obj.toString());
+				this.warning("Unmapped java-type found: "
+						+ obj.getClass().getName()
+						+ ". Mapped to StringProperty ['" + name + "', '"
+						+ obj.toString() + "']");
 			}
-			LongProperty p = PropertyHelper.createLongProperty(name, value);
 			return p;
 		}
 		case Types.TIMESTAMP: {
-			DateProperty p = PropertyHelper.createDateProperty(name, new Date(
+			DateProperty p = null;
+			
+			if (obj == null) {
+				p = PropertyHelper.createDateProperty(name, null);
+			} else {
+				p = PropertyHelper.createDateProperty(name, new Date(
 					((Timestamp) obj).getTime()));
+			}
 			return p;
 		}
 		case Types.LONGVARCHAR: {
 			StringProperty p = PropertyHelper.createStringProperty(name,
 					(String) obj);
-			return p;
-		}
-		case Types.DOUBLE:
-		case Types.DECIMAL: {
-			DoubleProperty p = PropertyHelper.createDoubleProperty(name,
-					(Double) obj);
 			return p;
 		}
 		default: {

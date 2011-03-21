@@ -32,19 +32,36 @@ public abstract class AbstractDatabaseCommand extends AbstractProxyCommand imple
 	private static final NBCTestLogger logger = NBCTestLoggingFactory
 			.getInstance().getLogger(DatabaseCommand.class);
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void info(String msg) {
 		logger.info(msg);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void debug(String msg) {
 		logger.debug(msg);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void error(String msg) {
 		logger.error(msg);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void warning(String msg) {
+		logger.warning(msg);
 	}
 	
 }
